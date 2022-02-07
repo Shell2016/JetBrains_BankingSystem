@@ -15,10 +15,6 @@ public class Account {
         return CARD_NUMBER;
     }
 
-    public String getPIN() {
-        return PIN;
-    }
-
     public int getBalance() {
         return balance;
     }

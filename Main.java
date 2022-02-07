@@ -32,7 +32,7 @@ public class Main {
                 case "0":
                     System.out.println("\nBye");
                     dataBase.closeConnection();
-                    System.exit(0);
+                    return;
                 case "1":
                     try {
                         dataBase.createAccount();
@@ -47,26 +47,58 @@ public class Main {
                     String pin = scanner.nextLine();
                     Account account = dataBase.logIn(cardNumber, pin);
                     boolean isLoggedIn = account != null;
-                    if (isLoggedIn) System.out.println("\nYou have successfully logged in!\n");
-
+                    if (isLoggedIn) System.out.println("\nYou have successfully logged in!");
                     while (isLoggedIn) {
-                        System.out.println("1. Balance\n" +
-                                "2. Log out\n" +
+                        System.out.println("\n1. Balance\n" +
+                                "2. Add income\n" +
+                                "3. Do transfer\n" +
+                                "4. Close account\n" +
+                                "5. Log out\n" +
                                 "0. Exit");
                         action = scanner.nextLine();
                         switch (action) {
                             case "0":
                                 System.out.println("\nBye");
                                 dataBase.closeConnection();
-                                System.exit(0);
+                                return;
                             case "1":
-                                System.out.println("\nBalance: " + account.getBalance() + "\n");
+                                System.out.println("\nBalance: " + account.getBalance());
                                 break;
                             case "2":
+                                System.out.println("Enter income:");
+                                int income = 0;
+                                try {
+                                    income = Integer.parseInt(scanner.nextLine());
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Wrong input for income: " + e.getMessage());
+                                }
+                                if (income <= 0) System.out.println("Please,enter value bigger then zero");
+                                else {
+                                    dataBase.addIncome(income, account);
+                                }
+                                break;
+                            case "4":
+                                isLoggedIn = !dataBase.closeAccount(account);
+                                break;
+                            case "3":
+                                System.out.println("\nTransfer\n" +
+                                        "Enter card number:");
+                                String cardNumberToTransfer = scanner.nextLine();
+                                if (dataBase.checkCardNumberToTransfer(account, cardNumberToTransfer)) {
+                                    System.out.println("Enter how much money you want to transfer:");
+                                    try {
+                                        int moneyToTransfer = Integer.parseInt(scanner.nextLine());
+                                        dataBase.transfer(account, cardNumberToTransfer, moneyToTransfer);
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Please enter a number!");
+                                    }
+                                }
+                                break;
+                            case "5":
                                 isLoggedIn = false;
                                 break;
                             default:
-                                System.out.println("\nWrong input!\n");
+                                System.out.println("\nWrong input!");
                                 break;
                         }
                     }
@@ -77,4 +109,6 @@ public class Main {
             }
         }
     }
+
+
 }
